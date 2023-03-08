@@ -8,7 +8,9 @@
 #include "tilePos.h"
 #include "spriteLookup.h"
 #include "handleInputs.h"
+#include "linkedList.h"
 #include "map.h"
+#include "utils.h"
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
@@ -17,13 +19,13 @@ SDL_Renderer* gRenderer = NULL;
 #define WINDOW_HEIGHT 1080
 #define TILE_WIDTH 12
 #define TILE_HEIGHT 12
-const int SCREEN_WIDTH = WINDOW_WIDTH / TILE_WIDTH; // Screen width in tiles
-const int SCREEN_HEIGHT = WINDOW_HEIGHT / TILE_HEIGHT;
+#define SCREEN_WIDTH WINDOW_WIDTH / TILE_WIDTH // Screen width in tiles
+#define SCREEN_HEIGHT WINDOW_HEIGHT / TILE_HEIGHT
 const char* tilemapPath = "assets/tilemap12x12.png";
 SDL_Texture* tilemap = NULL;
 
-int playerX = 10;
-int playerY = 10;
+int playerX = WORLD_WIDTH / 2;
+int playerY = WORLD_HEIGHT / 2;
 
 typedef struct {
 	int posX;
@@ -40,12 +42,18 @@ typedef struct {
 	int height;
 } MapWindow;
 
-
 typedef struct {
-	struct ListItem* prev;
-	struct ListItem* next;
-	char* item;
-} ListItem;
+	int posX;
+	int posY;
+	int width;
+	int height;
+	List* stringList;
+} LogWindow;
+
+/*TitleFrame mainFrame = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, "ADVENTURE"};*/
+MapWindow mapWindow = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+LogWindow logWindow = { 1, 70 - 1 , 70, 20 };
+
 
 void initSDL();
 void quit();
@@ -55,25 +63,29 @@ void renderCharacter(char c, int x, int y, int scale);
 void renderString(char* string, int startx, int starty);
 void renderTile(int x, int y, int sx, int sy, int scale);
 void renderTitleFrame(const TitleFrame* window);
-void renderMapWindow(const* MapWindow);
+void renderMapWindow(const MapWindow* window);
+void renderLogWidow(const LogWindow* window);
+void renderBackgroundBox(int x, int y, int width, int height);
+void logString(char* string);
 
 int main(int argc, char* args[]) {
 	srand(time(NULL));
 
 	initSDL();
 	loadTilemap();
-
-	TitleFrame mainFrame = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, "ADVENTURE"};
-	MapWindow mapWindow = { 1, 1, 100, SCREEN_HEIGHT -2};
-
-	printf("screen width/height %d %d", SCREEN_WIDTH, SCREEN_HEIGHT);
 	
-
+	logWindow.stringList = newList();
+	
 	generateOverworld();
+
+	logString("You awake, bleary eyed, in an unfamilliar forest.");
+	logString("Bright shafts of sunlight lance through the canopy above.");
 	
 	while (gInputState.quit == false) {
 
 		updateInputState();
+
+		
 
 		if (gInputState.upArrow) {
 			playerY--;
@@ -97,9 +109,9 @@ int main(int argc, char* args[]) {
 		}
 
 		SDL_RenderClear(gRenderer);
-		renderTitleFrame(&mainFrame);
+		/*renderTitleFrame(&mainFrame);*/
 		renderMapWindow(&mapWindow);
-		renderString("This is a test... :) /", 20, 20);
+		renderLogWidow(&logWindow);
 		SDL_RenderPresent(gRenderer);
 	}
 
@@ -251,11 +263,11 @@ void renderMapWindow(const MapWindow* mapWindow) {
 				int screenX = (mapViewCenterX - distX);
 				int screenY = (mapViewCenterY - distY);
 
-				renderTile(screenX, screenY, groundTileSprite.x, groundTileSprite.y, 2);
+				renderTile(screenX, screenY, groundTileSprite.x, groundTileSprite.y, zoomFactor);
 
 				if (tile->obstructed) {
 					Sprite objectSprite = gSpriteLookup[tile->obstructor.type];
-					renderTile(screenX, screenY, objectSprite.x, objectSprite.y, 2);
+					renderTile(screenX, screenY, objectSprite.x, objectSprite.y, zoomFactor);
 				}
 			}
 
@@ -264,8 +276,41 @@ void renderMapWindow(const MapWindow* mapWindow) {
 
 	// render the player
 	Sprite playerSprite = gSpriteLookup[8];
-	renderTile(mapViewCenterX, mapViewCenterY, playerSprite.x, playerSprite.y, 2);
+	renderTile(mapViewCenterX, mapViewCenterY, playerSprite.x, playerSprite.y, zoomFactor);
 
-	TitleFrame mapTitleFrame = { mapWindow->posX, mapWindow->posY, mapWindow->width, mapWindow->height, "" };
+	TitleFrame mapTitleFrame = { mapWindow->posX, mapWindow->posY, mapWindow->width, mapWindow->height, "ADVENTURE GAME" };
 	renderTitleFrame(&mapTitleFrame);
+}
+
+void renderLogWidow(LogWindow* logWindow) {
+	renderBackgroundBox(logWindow->posX, logWindow->posY, logWindow->width, logWindow->height);
+	TitleFrame logWindowFrame = { logWindow->posX, logWindow->posY, logWindow->width, logWindow->height, "LOG" };
+	renderTitleFrame(&logWindowFrame);
+
+	
+	int drawX = logWindow->posX + 1;
+	int drawY = logWindow->posY + logWindow->height - 2;
+	ListNode* ln = logWindow->stringList->tail;
+	while (ln != NULL and drawY > logWindow->posY) {
+		char* string = (char*)ln->data;
+		renderString(string, drawX, drawY);
+		drawY--;
+		ln = ln->prev;
+	}
+	//for (int i = 0; i < logWindow->stringList->size; ++i) {
+	//	char* string = (char*)ln->data;
+	//	renderString(string, drawX, drawY);
+	//	drawY--;
+	//	
+	//}
+}
+
+void renderBackgroundBox(int x, int y, int width, int height) {
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 100);
+	SDL_Rect rect = { x * TILE_WIDTH, y * TILE_WIDTH, width * TILE_WIDTH, height * TILE_HEIGHT };
+	SDL_RenderFillRect(gRenderer, &rect);
+}
+
+void logString(char* string) {
+	append(logWindow.stringList, string);
 }

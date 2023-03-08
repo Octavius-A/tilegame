@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#define WORLD_WIDTH 50
-#define WORLD_HEIGHT 50
+#define WORLD_WIDTH 500
+#define WORLD_HEIGHT 500
 
 typedef struct {
 	int type;
