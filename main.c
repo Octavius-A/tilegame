@@ -64,7 +64,7 @@ int main(int argc, char* args[]) {
 	loadTilemap();
 
 	TitleFrame mainFrame = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, "ADVENTURE"};
-	MapWindow mapWindow = { 1, 1, SCREEN_WIDTH - 2, SCREEN_HEIGHT -2};
+	MapWindow mapWindow = { 1, 1, 100, SCREEN_HEIGHT -2};
 
 	printf("screen width/height %d %d", SCREEN_WIDTH, SCREEN_HEIGHT);
 	
@@ -160,7 +160,7 @@ void renderCharacter(char c, int x, int y, int scale) {
 
 void renderTile(int x, int y, int sx, int sy, int scale) {
 	SDL_Rect sRect = { sx * TILE_WIDTH, sy * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT };
-	SDL_Rect dRect = { x * (TILE_WIDTH * scale), y * (TILE_HEIGHT * scale), TILE_WIDTH * scale, TILE_HEIGHT * scale };
+	SDL_Rect dRect = { x * (TILE_WIDTH), y * (TILE_HEIGHT), TILE_WIDTH * scale, TILE_HEIGHT * scale };
 	SDL_RenderCopy(gRenderer, tilemap, &sRect, &dRect);
 }
 
@@ -222,21 +222,22 @@ void renderTitleFrame(const TitleFrame* frame) {
 }
 
 void renderMapWindow(const MapWindow* mapWindow) {
-	TitleFrame mapTitleFrame = { mapWindow->posX, mapWindow->posY, mapWindow->width, mapWindow->height, "" };
-	renderTitleFrame(&mapTitleFrame);
+	
 
-	int displayWidth = (mapWindow->width / 2) - 2;
-	int displayHeight = (mapWindow->height / 2) - 2;
+	int zoomFactor = 2;
 
+	int displayWidth = (mapWindow->width / zoomFactor) - 2;
+	int displayHeight = (mapWindow->height / zoomFactor) - 2;
+	
 	// for now synch the camera to the player position
 	int cameraX = playerX;
 	int cameraY = playerY;
 
-	int mapViewCenterX = mapWindow->posX + (mapWindow->width / 4);
-	int mapViewCenterY = mapWindow->posY + (mapWindow->height / 4);
+	int mapViewCenterX = mapWindow->posX + (mapWindow->width / 2);
+	int mapViewCenterY = mapWindow->posY + (mapWindow->height / 2);
 
-	for (int y = cameraY - (displayHeight / 2) - 1; y < cameraY + (displayHeight / 2); ++y) {
-		for (int x = cameraX - (displayWidth / 2) - 1; x < cameraX + (displayWidth / 2); ++x) {
+	for (int y = cameraY - (displayHeight / 2) - 1; y < cameraY + (displayHeight / 2) + 1; ++y) {
+		for (int x = cameraX - (displayWidth / 2) - 1; x < cameraX + (displayWidth / 2) + 1; ++x) {
 			if (x < 0 || x > WORLD_WIDTH || y < 0 || y > WORLD_HEIGHT) {
 				// do nothing for now (black)
 			}
@@ -245,10 +246,10 @@ void renderMapWindow(const MapWindow* mapWindow) {
 				WorldTile* tile = &gWorldMap[y][x];
 				Sprite groundTileSprite = gSpriteLookup[tile->groundType];
 				
-				int distX = cameraX - x;
-				int distY = cameraY - y;
-				int screenX = mapViewCenterX - distX;
-				int screenY = mapViewCenterY - distY;
+				int distX = (cameraX - x) * zoomFactor;
+				int distY = (cameraY - y) * zoomFactor;
+				int screenX = (mapViewCenterX - distX);
+				int screenY = (mapViewCenterY - distY);
 
 				renderTile(screenX, screenY, groundTileSprite.x, groundTileSprite.y, 2);
 
@@ -264,4 +265,7 @@ void renderMapWindow(const MapWindow* mapWindow) {
 	// render the player
 	Sprite playerSprite = gSpriteLookup[8];
 	renderTile(mapViewCenterX, mapViewCenterY, playerSprite.x, playerSprite.y, 2);
+
+	TitleFrame mapTitleFrame = { mapWindow->posX, mapWindow->posY, mapWindow->width, mapWindow->height, "" };
+	renderTitleFrame(&mapTitleFrame);
 }
