@@ -95,8 +95,9 @@ Sprite lookupChar(char c) {
 	case '_': i = 74;	break;
 	case '/': i = 75;	break;
 	case '\\': i = 76;	break;
-	case ' ': i = 77;	break;
+	case '|': i = 77;	break;
 	case '>': i = 79;   break;
+	case ' ': i = 80;	break;
 	default: i = 78;	break;
 	}
 
