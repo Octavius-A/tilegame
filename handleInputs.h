@@ -11,6 +11,8 @@ typedef struct {
 	bool downArrow;
 	bool upArrow;
 	bool r;
+	bool esc;
+	bool h, j, k, l, y, u, b, n; // Vim keys
 } InputState;
 
 extern InputState gInputState;

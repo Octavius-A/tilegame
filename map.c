@@ -69,7 +69,7 @@ void generateOverworld() {
 
 	/*int randomWidth = rand() % ( - minSize + 1) + minSize;*/
 
-	int numTrees = 1000;
+	int numTrees = 100000;
 	for (int i = 0; i < numTrees; ++i) {
 		int randX = rand() % (WORLD_WIDTH) + 1;
 		int randY = rand() % (WORLD_HEIGHT) + 1;
