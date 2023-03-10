@@ -1,8 +1,6 @@
 #include "handleInputs.h"
 
-InputState gInputState = {
-	false
-};
+InputState gInputState = { false };
 
 void updateInputState() {
 	SDL_Event event;

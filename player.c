@@ -3,7 +3,39 @@
 #include "map.h"
 #include "utils.h"
 
-void updatePlayer(Player* player) {
+#include <stdlib.h>
+
+Player gPlayer = {0};
+
+void initPlayer() {
+	bool playerPlaced = false;
+	int maxTries = 100;
+	int numTries = 0;
+
+	// This is broken btw
+	int spawnRadius = 25;
+	int spawnMinX = (WORLD_WIDTH / 2) - spawnRadius;
+	int spawnMaxX = (WORLD_WIDTH / 2) - spawnRadius;
+	int spawnMinY = (WORLD_HEIGHT / 2) - spawnRadius;
+	int spawnMaxY = (WORLD_HEIGHT / 2) - spawnRadius;
+
+	while (!playerPlaced && numTries < maxTries) {
+		numTries++;
+		
+		int randX = rand() % (spawnMaxX - spawnMinX + 1) + spawnMinX;
+		int randY = rand() % (spawnMaxY - spawnMinY + 1) + spawnMinY;
+		
+		if (!gWorldMap[randY][randX].obstructed) {
+			playerPlaced = true;
+			gPlayer.x = randX;
+			gPlayer.y = randY;
+		}
+	}
+
+	gPlayer.speed = 1;
+}
+
+void updatePlayer() {
 	int dirX = 0;
 	int dirY = 0;
 	
@@ -45,11 +77,11 @@ void updatePlayer(Player* player) {
 		dirY = 1;
 	}
 
-	int distX = dirX * player->speed;
-	int distY = dirY * player->speed;
+	int distX = dirX * gPlayer.speed;
+	int distY = dirY * gPlayer.speed;
 
-	int destX = player->x + distX;
-	int destY = player->y + distY;
+	int destX = gPlayer.x + distX;
+	int destY = gPlayer.y + distY;
 
 	bool canMove = false;
 	if (destX > 0 and destX < WORLD_WIDTH and destY > 0 and destY < WORLD_HEIGHT) {
@@ -57,7 +89,7 @@ void updatePlayer(Player* player) {
 	}
 
 	if (canMove) {
-		player->x = destX;
-		player->y = destY;
+		gPlayer.x = destX;
+		gPlayer.y = destY;
 	}
 }

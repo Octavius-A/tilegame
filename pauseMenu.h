@@ -1,11 +1,9 @@
 #pragma once
 #include "handleInputs.h"
 
-typedef enum {
-	QUIT,
-	CONTROLS,
-} MenuOption;
+void initPauseMenu();
 
-void updatePauseMenu() {
+void updatePauseMenu();
 
-}
+void renderPauseMenu();
+

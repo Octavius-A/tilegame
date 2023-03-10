@@ -6,4 +6,8 @@ typedef struct {
 	int speed;
 } Player;
 
-void updatePlayer(Player* p);
+extern Player gPlayer;
+
+void initPlayer();
+
+void updatePlayer();

@@ -96,6 +96,7 @@ Sprite lookupChar(char c) {
 	case '/': i = 75;	break;
 	case '\\': i = 76;	break;
 	case ' ': i = 77;	break;
+	case '>': i = 79;   break;
 	default: i = 78;	break;
 	}
 
