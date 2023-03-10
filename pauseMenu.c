@@ -12,10 +12,10 @@ typedef enum {
 
 char* menuStrings[MENU_ITEMS_COUNT] = {"QUIT", "CONTROLS", "OPTIONS"};
 
-int currentItem;
+MenuItems currentItem;
 
 void initPauseMenu() {
-	currentItem = 0;
+	currentItem = QUIT;
 }
 
 void updatePauseMenu() {
@@ -40,6 +40,11 @@ void updatePauseMenu() {
 			currentItem = MENU_ITEMS_COUNT - 1;
 		}
 		gInputState.upArrow = false;
+	}
+	else if (gInputState.rtrn) {
+		if (currentItem == QUIT) {
+			gInputState.quit = true;
+		}
 	}
 	
 }

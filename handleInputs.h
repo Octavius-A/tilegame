@@ -13,6 +13,7 @@ typedef struct {
 	bool r;
 	bool esc;
 	bool h, j, k, l, y, u, b, n; // Vim keys
+	bool rtrn;
 } InputState;
 
 extern InputState gInputState;
