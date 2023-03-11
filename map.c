@@ -73,7 +73,7 @@ void generateOverworld() {
 
 	/*int randomWidth = rand() % ( - minSize + 1) + minSize;*/
 
-	int numTrees = 1000;
+	int numTrees = 10000;
 	for (int i = 0; i < numTrees; ++i) {
 		int randX = rand() % (WORLD_WIDTH) + 1;
 		int randY = rand() % (WORLD_HEIGHT) + 1;
@@ -136,7 +136,12 @@ void computeFOV() {
 	for (int y = gPlayer.y - gPlayer.viewRadius; y < gPlayer.y + gPlayer.viewRadius; ++y) {
 		for (int x = gPlayer.x - gPlayer.viewRadius; x < gPlayer.x + gPlayer.viewRadius; ++x) {
 			if (y > 0 and y < WORLD_HEIGHT and x > 0 and x < WORLD_WIDTH) {
-				gWorldMap[y][x].visible = bresenhamLine(gPlayer.x, gPlayer.y, x, y);
+				bool visible = bresenhamLine(gPlayer.x, gPlayer.y, x, y);
+				gWorldMap[y][x].visible = visible;
+				if (visible) {
+					gWorldMap[y][x].explored = true;
+				}
+				
 			}
 		}
 	}
@@ -151,9 +156,6 @@ void clearFOV() {
 }
 
 bool bresenhamLine(int x0, int y0, int x1, int y1) {
-	/*
-	Draws a line marking tiles as visible until it hits a tile that is not visible.
-	*/
 
 	int dx = abs(x1 - x0);
 	int dy = abs(y1 - y0);
@@ -161,10 +163,6 @@ bool bresenhamLine(int x0, int y0, int x1, int y1) {
 	int sy = y0 > y1 ? -1 : 1;
 	int x = x0;
 	int y = y0;
-
-	//if (gWorldMap[y1][x1].obstructed) {
-	//	gWorldMap[y1][x1].visible = true;
-	//}
 
 	bool visible = true;
 

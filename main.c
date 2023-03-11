@@ -55,9 +55,6 @@ int main(int argc, char* args[]) {
 		computeFOV();
 
 		renderGame();
-		/*renderTitleFrame(&mainFrame);*/
-		/*renderMapWindow(&mapWindow);*/
-		/*renderLogWidow(&logWindow);*/
 	}
 
 	quitRendering();
