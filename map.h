@@ -13,6 +13,8 @@ typedef struct {
 	bool obstructed; // Does it have an obstructing object?
 	GameObject obstructor; // a tree, a wall, etc
 	int groundType; // id of the ground type 
+	bool visible; // is the tile currently visible ?
+	bool explored; // has it been seen before?
 } WorldTile;
 
 typedef enum TILEID {
@@ -32,3 +34,4 @@ extern WorldTile gWorldMap[WORLD_HEIGHT][WORLD_WIDTH];
 
 void generateWorld();
 void generateOverworld();
+void computeFOV();

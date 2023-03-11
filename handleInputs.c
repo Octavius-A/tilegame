@@ -9,7 +9,7 @@ void updateInputState() {
 		case SDL_QUIT: gInputState.quit = true; break;
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
-			//case SDLK_q:		gInputState.quit = true; break;
+			case SDLK_q:		gInputState.quit = true; break;
 			case SDLK_r:		gInputState.r = true; break;
 			case SDLK_UP:		gInputState.upArrow = true; break;
 			case SDLK_DOWN:		gInputState.downArrow = true; break;

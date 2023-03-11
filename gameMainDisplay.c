@@ -26,20 +26,22 @@ void renderGameMainDisplay() {
 				// do nothing for now (black)
 			}
 			else {
-
+				
 				WorldTile* tile = &gWorldMap[y][x];
-				Sprite groundTileSprite = gSpriteLookup[tile->groundType];
+				if (tile->visible) {
+					Sprite groundTileSprite = gSpriteLookup[tile->groundType];
 
-				int distX = (cameraX - x) * zoomFactor;
-				int distY = (cameraY - y) * zoomFactor;
-				int screenX = (mapViewCenterX - distX);
-				int screenY = (mapViewCenterY - distY);
+					int distX = (cameraX - x) * zoomFactor;
+					int distY = (cameraY - y) * zoomFactor;
+					int screenX = (mapViewCenterX - distX);
+					int screenY = (mapViewCenterY - distY);
 
-				renderSprite(groundTileSprite, screenX, screenY, zoomFactor);
+					renderSprite(groundTileSprite, screenX, screenY, zoomFactor);
 
-				if (tile->obstructed) {
-					Sprite objectSprite = gSpriteLookup[tile->obstructor.type];
-					renderSprite(objectSprite, screenX, screenY, zoomFactor);
+					if (tile->obstructed) {
+						Sprite objectSprite = gSpriteLookup[tile->obstructor.type];
+						renderSprite(objectSprite, screenX, screenY, zoomFactor);
+					}
 				}
 			}
 

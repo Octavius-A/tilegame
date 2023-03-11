@@ -52,6 +52,8 @@ int main(int argc, char* args[]) {
 			gInputState.r = false;
 		}
 
+		computeFOV();
+
 		renderGame();
 		/*renderTitleFrame(&mainFrame);*/
 		/*renderMapWindow(&mapWindow);*/
